@@ -1,6 +1,32 @@
-# LangChain with Ollama Demo
+# 🤖 LangChain with Ollama Demo
 
-This project demonstrates the integration of LangChain with Ollama for AI/ML applications, featuring a FastAPI backend with Swagger documentation and Docker support.
+<div align="center">
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+
+🚀 A modern AI chat application integrating LangChain with Ollama, featuring a FastAPI backend and Swagger documentation.
+
+[Getting Started](#-quick-start) •
+[Features](#-features) •
+[Documentation](#-documentation) •
+[Docker Guide](#-docker-setup-and-usage) •
+[Troubleshooting](#-troubleshooting)
+
+</div>
+
+---
+
+## ✨ Features
+
+- 🤖 **LLM Integration** - Seamless integration with Ollama's llama2 model
+- 🚀 **Fast API Backend** - High-performance REST API with async support
+- 📚 **Swagger Docs** - Interactive API documentation
+- 🐳 **Docker Support** - Containerized deployment with health checks
+- 🔄 **Auto Model Loading** - Automated model initialization
+- 🛠️ **Health Monitoring** - Comprehensive service health checks
 
 ## Quick Start
 
@@ -28,34 +54,45 @@ docker-compose logs -f
 docker-compose down
 ```
 
-## System Requirements
+## 💻 System Requirements
 
-- Docker Engine 20.10.0 or newer
-- Docker Compose 2.0.0 or newer
-- Minimum 4GB RAM
-- At least 10GB free disk space (for Docker images and LLM model)
+| Requirement | Minimum | Recommended |
+|------------|---------|-------------|
+| Docker Engine | 20.10.0 | Latest |
+| Docker Compose | 2.0.0 | Latest |
+| RAM | 4GB | 8GB |
+| Disk Space | 10GB | 20GB |
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 .
-├── README.md
-├── requirements.txt
-├── main.py
-├── Dockerfile
-├── docker-compose.yml
-├── .dockerignore
-├── scripts/
-│   └── init-ollama.sh      # Ollama initialization script
-└── app/
-    ├── __init__.py
-    ├── routers/
-    │   ├── __init__.py
-    │   └── chat_router.py  # Chat API endpoints
-    └── services/
-        ├── __init__.py
-        └── llm_service.py  # LLM integration service
+├── 📄 README.md
+├── 📄 requirements.txt
+├── 🐍 main.py
+├── 🐳 Dockerfile
+├── 🐳 docker-compose.yml
+├── 📝 .dockerignore
+├── 📂 scripts/
+│   └── 📜 init-ollama.sh      # Ollama initialization script
+└── 📂 app/
+    ├── 📄 __init__.py
+    ├── 📂 routers/
+    │   ├── 📄 __init__.py
+    │   └── 🌐 chat_router.py  # Chat API endpoints
+    └── 📂 services/
+        ├── 📄 __init__.py
+        └── 🤖 llm_service.py  # LLM integration service
 ```
+
+### 🔑 Key Components
+
+| Component | Description |
+|-----------|-------------|
+| `init-ollama.sh` | Handles Ollama service initialization and model download |
+| `docker-compose.yml` | Defines and configures the application services |
+| `llm_service.py` | Manages LLM interactions and health checks |
+| `chat_router.py` | Implements the chat API endpoints |
 
 ### Key Components
 
@@ -309,11 +346,11 @@ curl -X POST http://localhost:8000/api/v1/chat \
 }
 ```
 
-## Troubleshooting
+## ⚠️ Troubleshooting
 
-### Common Issues
+### 🔍 Common Issues
 
-1. **Services won't start**:
+1. **🚫 Services won't start**:
    ```bash
    # Check service logs
    docker-compose logs
@@ -323,12 +360,12 @@ curl -X POST http://localhost:8000/api/v1/chat \
    lsof -i :11434
    ```
 
-2. **API returns 500 error**:
+2. **❌ API returns 500 error**:
    - Check if Ollama service is healthy
    - Verify model is downloaded
    - Check API logs: `docker-compose logs api`
 
-3. **Slow responses**:
+3. **🐌 Slow responses**:
    - First request might be slow due to model loading
    - Check resource usage: `docker stats`
 
@@ -380,6 +417,18 @@ curl -X POST http://localhost:8000/api/v1/chat \
 2. Monitor logs during development
 3. Use Swagger UI for testing API endpoints
 4. Check service status with `docker-compose ps`
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+Made with ❤️ using [LangChain](https://langchain.com) and [Ollama](https://ollama.ai)
+
+</div>
 
 ## Development
 
