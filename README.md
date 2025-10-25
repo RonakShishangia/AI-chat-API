@@ -21,11 +21,12 @@
 
 ## ✨ Features
 
-- 🤖 **LLM Integration** - Seamless integration with Ollama's llama2 model
+- 🤖 **LLM Integration** - Seamless integration with Ollama's llama2/llama3 models
+- 🎯 **Model Customization** - Configurable model parameters (temperature, top_k, top_p, context size)
 - 🚀 **Fast API Backend** - High-performance REST API with async support
 - 📚 **Swagger Docs** - Interactive API documentation
 - 🐳 **Docker Support** - Containerized deployment with health checks
-- 🔄 **Auto Model Loading** - Automated model initialization
+- 🔄 **Auto Model Loading** - Automated model initialization with customization
 - 🛠️ **Health Monitoring** - Comprehensive service health checks
 
 ## Quick Start
@@ -89,10 +90,21 @@ docker-compose down
 
 | Component | Description |
 |-----------|-------------|
-| `init-ollama.sh` | Handles Ollama service initialization and model download |
-| `docker-compose.yml` | Defines and configures the application services |
-| `llm_service.py` | Manages LLM interactions and health checks |
+| `init-ollama.sh` | Handles Ollama service initialization, model download, and customization |
+| `docker-compose.yml` | Defines and configures the application services with model parameters |
+| `llm_service.py` | Manages LLM interactions, model upgrades, and health checks |
 | `chat_router.py` | Implements the chat API endpoints |
+
+### 🎯 Model Configuration
+
+The application uses a customized version of the llama2 model (upgraded to llama3) with the following default parameters:
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| temperature | 0.7 | Controls randomness in responses |
+| top_k | 50 | Limits vocabulary for next-token selection |
+| top_p | 0.7 | Nucleus sampling threshold |
+| num_ctx | 4096 | Maximum context length |
 
 ### Key Components
 
@@ -341,7 +353,7 @@ curl -X POST http://localhost:8000/api/v1/chat \
         "status": "healthy",
         "models": 1,
         "model_ready": true,
-        "target_model": "llama2"
+        "target_model": "llama3"
     }
 }
 ```
@@ -386,9 +398,13 @@ curl -X POST http://localhost:8000/api/v1/chat \
    docker-compose up -d --build
    ```
 
-2. **Update the model**:
+3. **Update the models**:
    ```bash
+   # Update base model
    docker-compose exec ollama ollama pull llama2
+   
+   # Recreate customized model
+   docker-compose restart ollama
    docker-compose restart api
    ```
 
