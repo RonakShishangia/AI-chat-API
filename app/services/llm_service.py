@@ -8,7 +8,7 @@ from typing import Dict, Optional
 
 # Get Ollama host from environment variable or use default for Docker
 OLLAMA_HOST = os.getenv('OLLAMA_HOST', 'http://ollama:11434')
-MODEL_NAME = "llama2"
+MODEL_NAME = "llama3"  # Using the customized llama3 model
 
 def wait_for_ollama(timeout: int = 300, check_interval: int = 10) -> bool:
     """
@@ -63,9 +63,9 @@ def check_ollama_health() -> Dict[str, any]:
             "model_ready": False
         }
 
-# Initialize the Ollama LLM with the llama2 model
+# Initialize the Ollama LLM with the llama2 model (will be upgraded to llama3)
 llm = Ollama(
-    model="llama2",
+    model="llama3",
     base_url=OLLAMA_HOST,
     callback_manager=CallbackManager([StreamingStdOutCallbackHandler()])
 )
@@ -85,4 +85,5 @@ def get_llm_response(message: str) -> str:
         response = llm(message)
         return response.strip()
     except Exception as e:
+        print("Exception in get_llm_response:", e)
         raise Exception(f"Error getting LLM response: {str(e)}")

@@ -1,7 +1,27 @@
-version: '3.8'
-
 services:
+  ollama:
+    container_name: ollama-service
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./scripts:/scripts
+    environment:
+      - BASE_MODEL=llama2
+      - TARGET_MODEL=llama3
+      - MODEL_PARAMS={"temperature":0.7,"top_k":50,"top_p":0.7,"num_ctx":4096}
+    entrypoint: ["/bin/sh"]
+    command: ["/scripts/init-ollama.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list | grep -q ${TARGET_MODEL:-llama3}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   api:
+    container_name: ms-first-service
     build: .
     ports:
       - "8000:8000"
@@ -9,30 +29,41 @@ services:
       - .:/app
     environment:
       - ENVIRONMENT=development
+      - OLLAMA_MODEL=${TARGET_MODEL:-llama3}
     depends_on:
       ollama:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 15s
+      init-model:
+        condition: service_completed_successfully
 
-  ollama:
-    image: ollama/ollama:latest
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-      - ./scripts:/app/scripts
-    command: sh -c "chmod +x /app/scripts/init-ollama.sh && /app/scripts/init-ollama.sh"
-    healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:11434/api/tags"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+  init-model:
+    container_name: init-model
+    image: curlimages/curl:latest
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - BASE_MODEL=llama2
+      - TARGET_MODEL=llama3
+    command: >
+      sh -c '
+        echo 'Waiting for Ollama service...' &&
+        sleep 10 &&
+        echo 'Starting API server...' &&
+        uvicorn main:app --host 0.0.0.0 --port 8000 &&
+        echo "Started API server..." &&
+        echo "Checking if model ${TARGET_MODEL} is available..." &&
+        until curl -s -f "http://ollama-service:11434/api/tags" > /dev/null 2>&1; do
+          echo "Waiting for Ollama service..."
+          sleep 2
+        done &&
+        if ! curl -s "http://ollama-service:11434/api/tags" | grep -q "${TARGET_MODEL}"; then
+          echo "Model ${TARGET_MODEL} not found. Creating it..."
+          exit 1
+        else
+          echo "Model ${TARGET_MODEL} is available"
+          exit 0
+        fi'
 
 volumes:
   ollama_data:
